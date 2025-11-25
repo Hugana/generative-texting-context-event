@@ -16,6 +16,9 @@ public class HttpRequestSystem extends ScriptableSystem {
   public let vMessages: array<String>;
   public let npcResponses: array<String>;
 
+  // added for game contex.
+  public let pendingContext: String; 
+
   /// Lifecycle ///
 
   private func OnAttach() {
@@ -313,10 +316,26 @@ public class HttpRequestSystem extends ScriptableSystem {
 
   // Add new messages to history arrays
   public func AppendToHistory(message: String, fromPlayer: Bool) {
+
+    //Remove Whitespaces at the start of the message
+    while StrBeginsWith(message, "\n") || StrBeginsWith(message, " ") {
+        message = StrRight(message, StrLen(message) - 1);
+    }
+
     if fromPlayer {
       ArrayPush(this.vMessages, message);
     } else {
-      ArrayPush(this.npcResponses, message);
+      let lastIndex = ArraySize(this.npcResponses) - 1;
+      
+      //If the message is "" then append message 
+      if lastIndex >= 0 && Equals(this.npcResponses[lastIndex], "") {
+            
+            this.npcResponses[lastIndex] = message;
+
+        } else {
+        
+            ArrayPush(this.npcResponses, message);
+        }
     }
 
     // Limit history to the last 20 exchanges
@@ -362,6 +381,13 @@ public class HttpRequestSystem extends ScriptableSystem {
       i += 1;
     }
 
+    // Added for game context
+    if StrLen(this.pendingContext) > 0 {
+        promptText += "\n[SYSTEM EVENT: " + this.pendingContext + "]\n";
+
+        this.pendingContext = ""; 
+    }
+
     // Add the player’s current message to the prompt
     promptText += "V: " + playerInput + " <|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n" + GetCharacterLocalizedName(GetTextingSystem().character) + ": ";
 
@@ -385,8 +411,11 @@ public class HttpRequestSystem extends ScriptableSystem {
     let requestDTO = new TextGenerationRequestDTO();
     requestDTO.prompt = this.GeneratePrompt(playerInput);  
     requestDTO.trusted_workers = false;
-    requestDTO.models = ["aphrodite/Sao10K/L3-8B-Lunaris-v1", "koboldcpp/L3-8B-Stheno-v3.2",
-    "koboldcpp/NeuralDaredevil-8B-abliterated"];
+    /**requestDTO.models = ["aphrodite/Sao10K/L3-8B-Lunaris-v1", "koboldcpp/L3-8B-Stheno-v3.2",
+    "koboldcpp/NeuralDaredevil-8B-abliterated"];*/
+    
+    //For faster response with stable horde
+    requestDTO.models = [];
 
     let paramsDTO = new TextGenerationParamsDTO();
     paramsDTO.gui_settings = false;
