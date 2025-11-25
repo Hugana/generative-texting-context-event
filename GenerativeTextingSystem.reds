@@ -618,7 +618,11 @@ public class GenerativeTextingSystem extends ScriptableService {
         while i < ArraySize(vMessages) {
             let vMessage = vMessages[i];
             let npcResponse = npcResponses[i];
-            this.BuildMessage(vMessage, true, false);
+            
+            // Does not render UI Bubble if there is no message
+            if StrLen(vMessage) > 0 {            
+                this.BuildMessage(vMessage, true, false);
+            }
 
             if StrLen(npcResponse) == 0 {
                 i += 1;
