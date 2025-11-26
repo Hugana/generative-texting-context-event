@@ -403,6 +403,11 @@ public class HttpRequestSystem extends ScriptableSystem {
 
     this.systemPrompt = "<|start_header_id|>system<|end_header_id|>\n\n" + GetCharacterBio(character) + "\n" + GetCharacterRelationship(character, romance) + "\n " + guidelines;
 
+    // If the current selected character as a tracked mission: Append the context of the mission to the prompt
+    let dataSystem = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance()).Get(n"ContextDataSystem") as ContextDataSystem;
+    let charName = GetCharacterLocalizedName(GetTextingSystem().character);
+    this.systemPrompt += "\n" + dataSystem.GetPerCharacterQuestContext(charName);
+
     return this.systemPrompt;    
   }
 
