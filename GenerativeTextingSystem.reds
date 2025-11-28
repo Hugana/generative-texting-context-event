@@ -65,6 +65,7 @@ public class GenerativeTextingSystem extends ScriptableService {
     @runtimeProperty("ModSettings.displayValues.German", "German")
     @runtimeProperty("ModSettings.displayValues.Italian", "Italian")
     @runtimeProperty("ModSettings.displayValues.Portuguese", "Portuguese")
+    @runtimeProperty("ModSettings.displayValues.Russian", "Russian")
     public let language: PlayerLanguage = PlayerLanguage.English;
 
     @runtimeProperty("ModSettings.mod", "Generative Texting")

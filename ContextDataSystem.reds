@@ -17,7 +17,7 @@ public class ContextDataSystem extends ScriptableSystem {
     // Prompt Generation for Police Heat Change Event
     public func GetPoliceEventPrompt(heatLevel: Int32) -> String {
         let basePromt = 
-        "[INSTRUCTION: You are roleplaying. V just gained police heat. Send V a text message reacting to this. " +
+        "[INSTRUCTION: You are roleplaying. V just gained police heat, you heard it on the scanners but are unsure if it is V as the suspect. Send V a text message reacting to this. " +
         "DO NOT output the heat level. DO NOT output your mood. DO NOT output your name. Output ONLY the text message body.] " +
         "Context: ";
         
@@ -73,7 +73,7 @@ public class ContextDataSystem extends ScriptableSystem {
                 case "With a Little Help from My Friends":
                     return "MISSION: With a Little Help from My Friends. CONTEXT: I am planning a heist behind Saul's back. " +
                     "We are going to steal a Militech Basilisk tank from a convoy to help the clan, even though Saul forbade it. " +
-                    "The plan involves getting the veterans to help us use an old train locomotive to block the tracks. " +
+                    "T/ New Function in ContextDataSystemhe plan involves getting the veterans to help us use an old train locomotive to block the tracks. " +
                     "I am angry at Saul's passiveness but excited about the plan. " +
                     "CURRENT SITUATION: " + this.GetCurrentQuestObjective(journalManager) + ". INSTRUCTION: Be rebellious and determined.";
 
@@ -214,6 +214,64 @@ public class ContextDataSystem extends ScriptableSystem {
         }
 
         return "";
+    }
+
+    // Prompt Generation for Bar Invitation
+    public func GetBarLocationInvite(districtID: String) -> String {
+
+        // 1. Define the Instruction (Base Prompt)
+        // We tell the AI: "V is near you. Invite them for a drink."
+        let basePrompt = 
+        "[INSTRUCTION: You are roleplaying. V has just entered the district where you where there is a bar. " +
+        "Send V a casual text message inviting them to join you or if they want to hangout in the future for a drink at the bar. " +
+        "Keep it short and natural. Output location name in your setence for V to know where to meet. Output ONLY the text message body.] " +
+        "Context: ";
+        
+        
+
+        // Lizzie's Bar (Watson / Kabuki)
+        if Equals(districtID, "Districts.Kabuki")  {
+            return basePrompt + 
+            "Location: Lizzie's Bar (The Mox hangout). Atmosphere: Neon, chaotic, loud braindance music. " +
+            "Tone: Energetic, fun, or cheeky. Mention the vibe.";
+        }
+
+        // Afterlife (Watson / Little China)
+        if Equals(districtID, "Districts.LittleChina") {
+            return basePrompt + 
+            "Location: The Afterlife (Legendary Merc bar). Atmosphere: Dark, cool, smelling of old smoke and cold metal. " +
+            "Tone: Cool, respectful. Mention grabbing a 'real drink' or seeing Rogue.";
+        }
+
+        // El Coyote Cojo (Heywood / The Glen)
+        if Equals(districtID, "Districts.TheGlen") {
+            return basePrompt + 
+            "Location: El Coyote Cojo. Atmosphere: Warm, local, family-owned dive bar. " +
+            "Tone: Friendly, welcoming. Mention Mama Welles or that the first round is on you.";
+        }
+
+        // Dark Matter (Westbrook / Japantown)
+        if Equals(districtID, "Districts.JapanTown") {
+            return basePrompt + 
+            "Location: Dark Matter (Exclusive High-End Club). Atmosphere: Expensive, high-energy, VIPs and celebrities everywhere. " +
+            "Tone: Excited, feeling exclusive. Mention you got on the guest list or the view.";
+        }
+
+        // Red Dirt Bar (Santo Domingo / Arroyo)
+        if Equals(districtID, "Districts.Arroyo") {
+            return basePrompt + 
+            "Location: Red Dirt Bar (Old Rockerboy dive). Atmosphere: Gritty, loud live rock music, cheap beer. " +
+            "Tone: Chill, nostalgic, or rough. Mention the band playing or the cheap booze.";
+        }
+
+        // Sunset Motel (Badlands / Red Peaks)
+        if Equals(districtID, "Districts.ReadPeaks") {
+            return basePrompt + 
+            "Location: Sunset Motel (Badlands). Atmosphere: Dusty, lonely, quiet desert highway, flickering neon signs. " +
+            "Tone: Low-key, relaxed, or secretive. Mention watching the sunset, escaping the city noise, or grabbing a cold beer in the middle of nowhere.";
+        }
+
+        return ""; 
     }
 
     // Get current tracked Quest Objetive ex:. "Meet with Panam"

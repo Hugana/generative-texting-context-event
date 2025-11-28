@@ -14,7 +14,8 @@ public class WeatherMonitorCallback extends DelayCallback {
 // Funtion callback to send http request with context
 public class ContextEventCallback extends DelayCallback {
     public let contextMessage: String; 
-    public let heatLevel: Int32;       
+    public let heatLevel: Int32;     
+    public let districtName: String;  
     
     public func Call() -> Void {
 
@@ -105,7 +106,7 @@ public class ContextEventManager extends ScriptableSystem {
                     let eventCallback = new ContextEventCallback();
                     eventCallback.contextMessage = prompt;
                     eventCallback.heatLevel = 0;
-
+                    
                     GameInstance.GetDelaySystem(this.GetGameInstance()).DelayCallback(eventCallback, 1.0, false);
                     
                     //FTLog("Weather Event TRIGGERED: " + ToString(currentType) + " (Rolled: " + roll + ")");
@@ -116,6 +117,46 @@ public class ContextEventManager extends ScriptableSystem {
         }
     }
 }
+
+
+// Wrapped Method for District Change
+@wrapMethod(PreventionSystem)
+private final func OnDistrictAreaEntered(request: ref<DistrictEnteredEvent>) -> Void {
+    wrappedMethod(request);
+
+    if IsDefined(this.m_districtManager) {
+        
+        // 3. Get the District Object
+        let currentDistrict: ref<District> = this.m_districtManager.GetCurrentDistrict();
+
+        if IsDefined(currentDistrict) {
+            
+            let districtID: TweakDBID = currentDistrict.GetDistrictID();
+
+            let districtName: String = TDBID.ToStringDEBUG(districtID);
+
+            let dataSystem = GameInstance.GetScriptableSystemsContainer(this.GetGameInstance()).Get(n"ContextDataSystem") as ContextDataSystem;
+
+            //FTLog("DISTRICT CHANGE DETECTED: " + districtName);
+            
+            if Equals(dataSystem.GetBarLocationInvite(districtName),""){ return; }
+
+            let chance: Float = 0.05;
+
+            let roll: Float = RandRangeF(0.0, 1.0);
+
+            if roll <= chance {
+
+                let districtEvent = new ContextEventCallback(); 
+                districtEvent.districtName = districtName;
+                districtEvent.contextMessage = dataSystem.GetBarLocationInvite(districtName);
+                GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(districtEvent, 1.0, false);
+            }
+        }
+    }
+}
+
+
 
 // Wraped Method for Police Heat Change
 @wrapMethod(PreventionSystem)

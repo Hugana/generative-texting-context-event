@@ -188,6 +188,8 @@ public func GetPlayerLanguage() -> String {
             return string + "Italian";
         case PlayerLanguage.Portuguese:
             return string + "Portuguese";
+        case PlayerLanguage.Russian:
+            return string + "Russian";
     }
 }
 
@@ -220,7 +222,8 @@ enum PlayerLanguage {
     French = 2,
     German = 3,
     Italian = 4,
-    Portuguese = 5
+    Portuguese = 5,
+    Russian = 6
 }
 
 public func GetTextingSystem() -> ref<GenerativeTextingSystem> {
